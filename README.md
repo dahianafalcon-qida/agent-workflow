@@ -12,7 +12,7 @@ This framework decouples high-level architectural planning on the host machine f
 ┌─────────────────────────────────────────────────────────────────────────┐
 │ HOST MACHINE (ad-parent Workspace)                                      │
 │                                                                         │
-│  [ Parent Orchestrator Agent ]                                         │
+│  [ Parent Orchestrator Agent ]                                          │
 │   ├── Reads global architecture & domain context                        │
 │   ├── Inspects company ADRs via `gh` CLI                                │
 │   ├── Publishes accepted plans to Jira (Parent User Story & Subtasks)   │
