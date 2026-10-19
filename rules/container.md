@@ -3,14 +3,16 @@
 ## Role & Environment
 
 - You are executing **INSIDE a DevContainer**.
+- Your working directory root is the current repository root inside the container (e.g., `/app` or `/workspace`).
 - Python, Pipenv/Poetry, Pytest, and all backend tools are directly available in your PATH.
 
-## File & Directory Convention
+## File & Directory Convention (CONTAINER PERSPECTIVE)
 
-- Implementation task context and artifacts are located inside a dedicated folder per subtask:
+- Implementation task context and artifacts are located inside your local repository folder:
   `.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/`
 - The core contract file to read and update is:
   `.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/implementation.md`
+- Do NOT expect or look for parent repository folder names (e.g., `ad-backend-quotation/`) in file paths, as you are executing directly from inside the mounted submodule root.
 - Inspect co-located artifacts in the same folder if present (e.g., `swagger.yaml`, schema JSONs) when writing implementation or test code.
 
 ## Execution Modes: Planned vs. Direct Work
@@ -50,6 +52,12 @@
 - **BLACK-BOX / CONTRACT TESTING:** Tests MUST validate input/output contracts and business requirements specified in Section 3 of `implementation.md` and any associated Swagger/OpenAPI specs.
 - **CORRECT THE CODE, NOT THE TEST:** If a test asserting valid business output fails, fix the code logic. DO NOT weaken test assertions or mocks just to make tests green.
 
+## Communication Protocol in Section 5
+
+- Append notes, blockers, or execution feedback in Section 5 of `implementation.md` using the blockquote thread format:
+  `> 📩 **Child Container** [Timestamp]`
+  `> Your message / blocker / deviation note here.`
+
 ## Workflow for Planned Mode (Mode A)
 
 1. **Fetch & Validate Plan:**
@@ -59,7 +67,7 @@
 
 2. **Handle Inconsistencies or Execution Blockers:**
    - **If the plan contains flaws, failing edge cases, or ADR concerns:**
-     - Document runtime failure, failing test logs, or architectural concerns in Section 5 (`Notes from Child to Parent`).
+     - Document runtime failure, failing test logs, or architectural concerns in Section 5 by appending a `> 📩 **Child Container** [Timestamp]` block.
      - Pause execution or adapt implementation safely, documenting the decision.
 
 3. **Execute & Verify:**
@@ -69,4 +77,4 @@
 4. **Log Progress:**
    - Mark completed tasks in Section 2 as `[x]`.
    - Update Section 4 (`Container Agent Execution Log`) in `implementation.md`.
-   - Record any architectural corrections in Section 5 (`Notes from Child to Parent`).
+   - Append completion status or architectural notes in Section 5 as a new `> 📩 **Child Container**` thread entry.

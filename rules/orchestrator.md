@@ -14,56 +14,53 @@
 ### 2. Fast-Track Mode (Quick Tasks, Minor Fixes, Test-Only Updates)
 
 - Triggered for simple tasks or direct developer requests that do not require global architectural orchestration.
-- **Bypass Requirements:**
-  - Skip global design file creation in `ad-parent/design/` if not needed.
-  - Skip full ADR verification if the change has no architectural impact.
-  - Create a short implementation plan directly focusing only on the specific requirement or test.
+- Bypass global design files and ADR checks. Create a short plan directly if needed.
 
-## Global ADR (Architecture Decision Records) Governance (CRITICAL)
+## Directory & File Output Constraints (STRICT ENFORCEMENT)
 
-- Before drafting any global design or implementation plan in **Standard Mode**, you MUST inspect the team's global ADR repository using `gh` CLI commands on the host.
-- **Plan Enforcement:**
-  1. Identify all applicable ADRs for the target task and cite them in Section 3 of the implementation plan.
-  2. If a planned design consciously deviates from an existing ADR, explicitly document the reason in the plan and note that a new ADR proposal is required.
-  3. The Child Agent inside the DevContainer DOES NOT have access to `gh` or ADR repositories; you are solely responsible for ensuring ADR compliance during the planning phase.
-
-## Naming Strategy & Directory Structure for Implementation Artifacts
-
-- Before creating any design or implementation plan, ensure you have:
-  1. **Parent User Story ID:** (e.g., `AD-1000` - Full-Stack Story holding the main business context).
-  2. **Technical Subtask ID:** (e.g., `AD-1025` - Specific Subtask mapped to the backend submodule/branch).
-  3. **Feature Keyword:** Concise identifier (e.g., `user-auth-v2`).
-- **Dedicated Implementation Directory:** Implementation plans and co-located artifacts MUST be stored inside a dedicated directory per subtask:
-  `ad-backend-quotation/.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/`
-- Main contract file naming format inside that directory:
+- **FORBIDDEN PATHS:** NEVER write plan files, drafts, or context files in `.djkit/`, `.git/`, `.vscode/`, or root framework directories.
+- **HOST PERSPECTIVE PATH:** On the host machine, you write implementation task artifacts inside the subrepository target folder:
   `ad-backend-quotation/.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/implementation.md`
-- Additional generated files (e.g., OpenAPI/Swagger specs, schema definitions) MUST be stored in the same directory:
-  `ad-backend-quotation/.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/swagger.yaml`
+- **CONTAINER PERSPECTIVE PATH:** Inside the plan content, references to task files MUST use relative paths local to the container:
+  `.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/implementation.md`
 
-## Planning & Contract Definition Strategy (CRITICAL)
+## Template Usage Protocol (MANDATORY STEP)
 
-- When generating `ad-backend-quotation/.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/implementation.md`, **you MUST explicitly define Black-Box Use Cases & Test Contracts**:
-  1. **Inputs:** Payload structures, query parameters, or function arguments.
-  2. **Expected Outputs:** Response bodies, status codes, database state changes.
-  3. **Edge Cases & Failure Modes:** Expected exceptions (e.g., 400 Bad Request, 404 Not Found) and error payloads.
-  4. **ADR Alignment & Artifact References:** Reference applicable ADRs and co-located files (like Swagger/OpenAPI specs) directly in Section 3.
-- **DO NOT** focus on internal implementation mechanics; focus on the observable contract so the Child Agent can test against it.
+- When generating `implementation.md`, **you MUST first read the template file at:**
+  `ad-parent/design/templates/implementation-template.md`
+- You are **STRICTLY REQUIRED** to follow the exact structure of the template, retaining all 5 sections:
+  - Section 1: Context & Scope
+  - Section 2: Technical Requirements & Tasks
+  - Section 3: Black-Box Use Cases, Test Contracts & Associated Artifacts
+  - Section 4: Container Agent Execution Log
+  - Section 5: Inter-Agent Communication Thread (Initialized with your opening `📤 Parent Orchestrator` entry)
+
+## Global ADR (Architecture Decision Records) Governance
+
+- Before drafting any global design or implementation plan in **Standard Mode**, inspect the team's global ADR repository using `gh` CLI commands on the host.
+- Cite applicable ADRs directly in Section 3 of `implementation.md`.
+
+## Naming Strategy & Jira Mapping
+
+- Ensure you have:
+  1. **Parent User Story ID:** (e.g., `AD-1000`).
+  2. **Technical Subtask ID:** (e.g., `AD-1025`).
+  3. **Feature Keyword:** (e.g., `user-auth-v2`).
 
 ## Planning Workflow & Jira Closure Protocol
 
 1. **Drafting Global Design & Strategy:**
    - Check global ADRs using `gh`.
-   - Draft and iterate the overall feature plan under the **Parent User Story ID** (`AD-1000`), covering Frontend, Backend, and Cross-Service requirements together with the user.
+   - Draft and iterate the overall feature plan under the **Parent User Story ID** (`AD-1000`) with the user.
 
 2. **Plan Acceptance & Hand-off Phase (CRITICAL STEP):**
-   - **ONLY UPON USER ACCEPTANCE** of the draft plan, execute the following actions:
-     a. **Publish to Parent Jira Story:** Post the consolidated global design plan as a comment under the Parent User Story (`AD-1000`).
-     b. **Generate Subtask Directory & Contracts:** Create `.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/`, populate `implementation.md` using the official template, and generate any auxiliary contract files (e.g., OpenAPI/Swagger specs) inside the same folder.
+   - **ONLY UPON USER ACCEPTANCE** of the draft plan:
+     a. **Publish to Parent Jira Story:** Post the consolidated design as a comment on the Parent User Story (`AD-1000`).
+     b. **Read Template & Generate Subtask Folder:** Read `ad-parent/design/templates/implementation-template.md`. Create `ad-backend-quotation/.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/`, populate `implementation.md` adhering strictly to the template structure, and generate auxiliary contract files (e.g., `swagger.yaml`) in the same folder.
 
 3. **Consolidation & Subtask Closure:**
    - Read Sections 4 and 5 at the bottom of `ad-backend-quotation/.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/implementation.md`.
-   - **If the Child Agent detected errors or questioned assumptions:** Review them against global ADRs using `gh` on the host, adjust the plan, update the Jira comment/plan, and respond in `Notes from Parent to Child`.
-   - **On Task Completion:** Post the completed implementation log (Sections 2, 4, and 5) and generated contract references directly as a closing comment on the **Technical Subtask** (`AD-1025`). Sync overall progress updates back to the Parent User Story (`AD-1000`).
+   - **On Task Completion:** Post the completed implementation log (Sections 2, 4, and 5) as a closing comment on the **Technical Subtask** (`AD-1025`). Sync overall progress updates back to the Parent User Story (`AD-1000`).
 
 ## Execution Restrictions
 

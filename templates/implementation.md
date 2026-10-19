@@ -15,7 +15,7 @@
 - **Parent User Story:** `<JIRA-PARENT-ID>`
 - **Technical Subtask:** `<JIRA-SUBTASK-ID>`
 - **Git Branch Reference:** `feature/<JIRA-SUBTASK-ID>-<keyword>`
-- **Implementation Folder:** `.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/`
+- **Implementation Folder (Local to Repo Root):** `.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/`
 
 ---
 
@@ -77,16 +77,10 @@
 
 ---
 
-## 5. Agent Feedback & Inter-Agent Communication
+## 5. Inter-Agent Communication Thread
 
-*Bidirectional communication mailbox between agents.*
+> 📤 **Parent Orchestrator** `[YYYY-MM-DD HH:MM]`
+> Plan generated and ready for execution. Refer to `swagger.yaml` for request validation.
 
-### 📩 Notes from Child to Parent (DevContainer -> Orchestrator)
-
-- **Blockers:** None / [Describe blocker if STATUS is BLOCKED]
-- **Deviations / ADR Concerns:** [Log any implementation decision not covered by global ADRs]
-- **Action Required by Parent:** [e.g., Update global env vars, notify frontend team]
-
-### 📤 Notes from Parent to Child (Orchestrator -> DevContainer)
-
-- *No new feedback.*
+> 📩 **Child Container** `[YYYY-MM-DD HH:MM]`
+> *Awaiting execution logs or blockers from the child agent...*
