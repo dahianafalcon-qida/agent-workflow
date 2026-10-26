@@ -20,7 +20,7 @@
 
 - **FORBIDDEN PATHS:** NEVER write plan files, drafts, or context files in `.djkit/`, `.git/`, `.vscode/`, or root framework directories.
 - **HOST PERSPECTIVE PATH:** On the host machine, you write implementation task artifacts inside the subrepository target folder:
-  `ad-backend-quotation/.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/implementation.md`
+  `{repository}/.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/implementation.md`
 - **CONTAINER PERSPECTIVE PATH:** Inside the plan content, references to task files MUST use relative paths local to the container:
   `.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/implementation.md`
 
@@ -56,10 +56,10 @@
 2. **Plan Acceptance & Hand-off Phase (CRITICAL STEP):**
    - **ONLY UPON USER ACCEPTANCE** of the draft plan:
      a. **Publish to Parent Jira Story:** Post the consolidated design as a comment on the Parent User Story (`AD-1000`).
-     b. **Read Template & Generate Subtask Folder:** Read `ad-parent/design/templates/implementation-template.md`. Create `ad-backend-quotation/.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/`, populate `implementation.md` adhering strictly to the template structure, and generate auxiliary contract files (e.g., `swagger.yaml`) in the same folder.
+     b. **Read Template & Generate Subtask Folder:** Read `ad-parent/.claude/implementation_template.md`. Create `{repository}/.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/`, populate `implementation.md` adhering strictly to the template structure, and generate auxiliary contract files (e.g., `swagger.yaml`) in the same folder.
 
 3. **Consolidation & Subtask Closure:**
-   - Read Sections 4 and 5 at the bottom of `ad-backend-quotation/.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/implementation.md`.
+   - Read Sections 4 and 5 at the bottom of `{repository}/.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/implementation.md`.
    - **On Task Completion:** Post the completed implementation log (Sections 2, 4, and 5) as a closing comment on the **Technical Subtask** (`AD-1025`). Sync overall progress updates back to the Parent User Story (`AD-1000`).
 
 ## Execution Restrictions
