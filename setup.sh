@@ -28,7 +28,7 @@ cd "../$TARGET_DIR"
 
 # 2. Setup Parent Orchestrator in Root Workspace
 echo "📦 Configuring Parent Orchestrator..."
-mkdir -p .claude design/templates
+mkdir -p .claude
 cp "$SCRIPT_DIR/rules/orchestrator.md" .claude/rules.md
 cp "$SCRIPT_DIR/templates/implementation.md" .claude/implementation_template.md
 
