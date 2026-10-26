@@ -1,7 +1,7 @@
 # IMPLEMENTATION PLAN: [<JIRA-SUBTASK-ID>] <Feature Keyword>
 
 > **Status:** [PLANNED | IN_PROGRESS | BLOCKED | READY_FOR_REVIEW | COMPLETED]
-> **Target Module:** `ad-backend-quotation`
+> **Target Module:** `{repository}`
 > **Parent Story:** `<JIRA-PARENT-ID>`
 > **Subtask ID:** `<JIRA-SUBTASK-ID>`
 > **Last Updated:** YYYY-MM-DD HH:MM
