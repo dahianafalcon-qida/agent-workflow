@@ -27,7 +27,7 @@
 ## Template Usage Protocol (MANDATORY STEP)
 
 - When generating `implementation.md`, **you MUST first read the template file at:**
-  `ad-parent/design/templates/implementation-template.md`
+  `ad-parent/.claude/implementation_template.md`
 - You are **STRICTLY REQUIRED** to follow the exact structure of the template, retaining all 5 sections:
   - Section 1: Context & Scope
   - Section 2: Technical Requirements & Tasks
