@@ -3,8 +3,16 @@
 ## Role & Environment
 
 - You are executing **INSIDE a DevContainer**.
-- Your working directory root is the current repository root inside the container (e.g., `/app` or `/workspace`).
+- Your working directory root is the mounted repository root inside the container (e.g., `/app` or `/workspace`).
 - Python, Pipenv/Poetry, Pytest, and all backend tools are directly available in your PATH.
+
+## Timezone & Timestamps (CRITICAL)
+
+- The container OS environment runs on **UTC**.
+- You MUST report all timestamps using the **Europe/Madrid** timezone so your logs align with the Parent Orchestrator.
+- Before logging any timestamp in Section 4 or Section 5, obtain the exact local time by running:
+  `TZ="Europe/Madrid" date +"%Y-%m-%d %H:%M"`
+- NEVER guess, invent, or output UTC timestamps.
 
 ## File & Directory Convention (CONTAINER PERSPECTIVE)
 
@@ -12,69 +20,72 @@
   `.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/`
 - The core contract file to read and update is:
   `.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/implementation.md`
-- Do NOT expect or look for parent repository folder names (e.g., `ad-backend-quotation/`) in file paths, as you are executing directly from inside the mounted submodule root.
-- Inspect co-located artifacts in the same folder if present (e.g., `swagger.yaml`, schema JSONs) when writing implementation or test code.
+- Do NOT expect or search for parent repository names or host folders (e.g., `{repository}/`). Your relative root begins at `.claude/...`.
+- Inspect co-located artifacts in the same folder (e.g., `swagger.yaml`, schema JSONs) when planning tests and implementation.
 
 ## Execution Modes: Planned vs. Direct Work
 
-### Mode A: Planned Implementation (Default for Epics/Features from Parent)
+### Mode A: Planned Implementation & Review Iteration (Default)
 
 - Applies when executing tasks assigned via `.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/implementation.md`.
-- Requires validating the plan, inspecting co-located artifacts (like Swagger/OpenAPI specs), following Black-Box testing, Add-Migrate-Remove pattern, and updating Sections 4 & 5.
+- Handles both initial implementation and subsequent **Review Feedback Loops** from the Parent Orchestrator.
+- Requires validating the plan, enforcing ADR-mandated TDD, following Add-Migrate-Remove pattern, adhering to PR templates, and updating Sections 4 & 5.
 
 ### Mode B: Direct Work Mode (Manual Dev Tasks, Quick Fixes, Adding Tests)
 
-- Triggered when the user interacts with you directly in the DevContainer terminal WITHOUT a formal parent implementation folder (e.g., *"Write tests for this function"*, *"Help me debug this error"*, *"Fix this typo"*).
-- **NO PARENT PLAN REQUIRED:** Act immediately on the user's prompt. Do NOT demand an implementation file, ADR check, or formal contracts.
-- Write, refactor, or test code directly as instructed.
+- Triggered when the user interacts with you directly in the DevContainer terminal WITHOUT a formal parent implementation folder.
+- Act immediately on the user's prompt without requiring a plan file or ADR audit.
 
-## Execution Rules & Restrictions (ALWAYS ACTIVE IN ALL MODES)
+## Strict TDD (Test-Driven Development) Protocol (MANDATORY PER ADR)
+
+Per team ADR governance, **writing production code before tests is strictly forbidden**:
+
+1. **RED:** Write the black-box contract tests first (`pytest`) based on Section 3 of `implementation.md`. Run the test suite and verify that the new tests fail for the expected reason.
+2. **GREEN:** Write the minimal production code necessary to make the tests pass, adhering to the Add-Migrate-Remove pattern.
+3. **REFACTOR:** Clean up and optimize the implementation while ensuring the test suite remains fully green.
+4. **NO WEAKENING ASSERTIONS:** Never alter test contracts to accommodate internal implementation bugs. Fix the business code.
+
+## Safe Refactoring & Live-Reload Preservation
+
+- The DevContainer runs active development servers with live-reload enabled.
+- **NEVER START BY DELETING CODE:**
+  1. **ADD FIRST:** Implement new functions or endpoints alongside existing ones.
+  2. **MIGRATE & USE:** Switch references, imports, and tests to the new implementation.
+  3. **VERIFY:** Run `pytest` and verify stability.
+  4. **REMOVE LAST:** Safely delete deprecated code only after full verification.
+
+## Execution Rules & Restrictions (ALWAYS ACTIVE)
 
 - **DIRECT RUNTIMES ONLY:** Run `python`, `pytest`, etc., directly in the terminal.
 - **NO DOCKER:** NEVER attempt to run `docker` or `docker compose`.
-- **NO GH / ADR LOOKUPS:** DO NOT attempt to use `gh` CLI or access external ADR repositories. The `gh` CLI is intentionally unavailable in this DevContainer. ADR compliance for complex tasks is handled by the Parent Orchestrator.
-- **STRICT GIT RESTRICTION:**
-  - UNDER NO CIRCUMSTANCES are you allowed to execute `git commit`, `git push`, `git merge`, `git rebase`, or any command that modifies Git history/branches.
-  - You MAY ONLY use read-only inspection commands like `git status` or `git diff` if strictly necessary.
+- **NO GH / ADR LOOKUPS:** DO NOT attempt to use `gh` CLI. ADR enforcement is delegated from the Parent Orchestrator.
+- **STRICT GIT RESTRICTION:** Under NO circumstances execute `git commit`, `git push`, `git merge`, or modify history/branches. Only read-only commands (`git status`, `git diff`) are allowed if necessary.
 
-## Safe Refactoring & Live-Reload Preservation (CRITICAL)
+## PR Description & Commit Message Protocol (MANDATORY STEP)
 
-- **Live-Reload Awareness:** The DevContainer runs active development servers (e.g., FastAPI/Uvicorn, Django runserver) with live-reload enabled.
-- **NEVER START BY DELETING CODE:**
-  1. **ADD FIRST:** Implement new code, functions, or endpoints alongside existing ones.
-  2. **MIGRATE & USE:** Switch references, imports, and tests to the new implementation.
-  3. **VERIFY:** Run `pytest` and verify the live-reload server remains stable.
-  4. **REMOVE LAST:** Safely delete old/deprecated code only after full verification.
+- When generating a Pull Request description or commit message:
+  1. **Check for Official PR Template:** Inspect and read `.github/PULL_REQUEST_TEMPLATE.md` (or `.github/PULL_REQUEST_TEMPLATE/*.md`).
+  2. **Follow the Template Structure:** Populate the PR draft strictly following all sections and checklists defined in `.github/PULL_REQUEST_TEMPLATE.md`.
+  3. **Include Task IDs:** Ensure Parent Story ID and Technical Subtask ID are referenced.
+  4. **Output:** Provide the formatted PR description and suggested commit message to the user and log them in Section 4 of `implementation.md`.
 
-## Test Integrity & Contract Enforcement (CRITICAL)
+## Workflow: Implementation & Review Feedback Loop (Mode A)
 
-- **NO TAILORED TESTS:** NEVER write or alter tests to match your internal implementation details.
-- **BLACK-BOX / CONTRACT TESTING:** Tests MUST validate input/output contracts and business requirements specified in Section 3 of `implementation.md` and any associated Swagger/OpenAPI specs.
-- **CORRECT THE CODE, NOT THE TEST:** If a test asserting valid business output fails, fix the code logic. DO NOT weaken test assertions or mocks just to make tests green.
-
-## Communication Protocol in Section 5
-
-- Append notes, blockers, or execution feedback in Section 5 of `implementation.md` using the blockquote thread format:
-  `> 📩 **Child Container** [Timestamp]`
-  `> Your message / blocker / deviation note here.`
-
-## Workflow for Planned Mode (Mode A)
-
-1. **Fetch & Validate Plan:**
+1. **Fetch & Inspect Plan / Review Feedback:**
    - Open `.claude/implementations/<JIRA-SUBTASK-ID>-<keyword>/implementation.md`.
-   - Read associated specs/swagger files in the same directory.
-   - **Critical Sanity Check:** Inspect the plan against the active codebase and run initial tests (`pytest`) to verify if technical assumptions hold true.
+   - **Check Section 5 for Review Notes:** If the Parent Orchestrator left review feedback (`📤 Parent Orchestrator (Review)`), treat these items as high-priority revision tasks.
+   - Read specs/swagger files in the same directory.
+   - Run initial tests (`pytest`) to verify baseline stability.
 
-2. **Handle Inconsistencies or Execution Blockers:**
-   - **If the plan contains flaws, failing edge cases, or ADR concerns:**
-     - Document runtime failure, failing test logs, or architectural concerns in Section 5 by appending a `> 📩 **Child Container** [Timestamp]` block.
-     - Pause execution or adapt implementation safely, documenting the decision.
+2. **Execute / Correct via TDD (Red -> Green -> Refactor):**
+   - For new features OR review corrections: write or adjust tests first to cover the feedback.
+   - Implement production code safely using Add -> Migrate -> Remove.
+   - Verify all tests pass (`pytest`).
 
-3. **Execute & Verify:**
-   - Write code using the **Add -> Migrate -> Remove** pattern.
-   - Verify logic against contract-based tests (`pytest`).
-
-4. **Log Progress:**
+3. **Log Progress & Reply in Section 5:**
    - Mark completed tasks in Section 2 as `[x]`.
-   - Update Section 4 (`Container Agent Execution Log`) in `implementation.md`.
-   - Append completion status or architectural notes in Section 5 as a new `> 📩 **Child Container**` thread entry.
+   - Update Section 4 (`Container Agent Execution Log`) with exact timestamps (`TZ="Europe/Madrid"`).
+   - If responding to a review, append a response entry in Section 5:
+     `> 📩 **Child Container** [YYYY-MM-DD HH:MM]`
+     `> Addressed review feedback: [Summary of changes made, tests added, or clarifications].`
+   - Read `.github/PULL_REQUEST_TEMPLATE.md` and generate or update the compliant PR description & commit message in Section 4.

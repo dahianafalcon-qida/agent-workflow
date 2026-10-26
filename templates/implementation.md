@@ -23,9 +23,9 @@
 
 *High-level task checklist. The container agent marks items as completed.*
 
-- [ ] Task 1: Create data model / database migration
-- [ ] Task 2: Implement business logic / endpoint
-- [ ] Task 3: Write integration and contract tests (`pytest`)
+- [ ] Task 1: Write failing contract/integration tests (TDD - Red Phase)
+- [ ] Task 2: Implement data model / migration / business logic (TDD - Green Phase)
+- [ ] Task 3: Refactor and ensure all tests pass (`pytest`)
 
 ---
 
@@ -40,21 +40,21 @@
 
 ### Applicable ADRs & Governance
 
-- **Mandatory ADRs:** [e.g., ADR-0012: UUID v4 for Primary Keys]
+- **Mandatory ADRs:** [e.g., ADR-0004: Strict TDD Approach, ADR-0012: UUID v4 for Primary Keys]
 - **Exceptions / Deviations:** [e.g., None]
 
 ### Use Case 1: [Happy Path Scenario Name]
 
-- **Trigger / Route:** POST /api/v2/quotations
+- **Trigger / Route:** POST /api/v2/example
 - **Input / Payload:**
   {
-    "customer_id": "UUID",
-    "amount": 150.00
+    "example_id": "UUID",
+    "value": 100
   }
 - **Expected Output:** Status 201 Created
   {
-    "quotation_id": "UUID",
-    "status": "pending"
+    "id": "UUID",
+    "status": "active"
   }
 
 ---
@@ -65,22 +65,23 @@
 
 ### Last Execution Summary
 
-- **Execution Date:** YYYY-MM-DD HH:MM
+- **Execution Date (Europe/Madrid):** YYYY-MM-DD HH:MM
 - **Tests Passing:** [YES | NO | N/A]
 - **Modified Files:**
   - path/to/modified_file1.py
 
 ### Step-by-Step Log
 
-1. *Implemented changes in src/...*
-2. *Executed pytest tests/... - All tests passed.*
+1. *TDD Red: Created failing test in tests/...*
+2. *TDD Green: Implemented logic in src/...*
+3. *TDD Refactor: Executed pytest - All tests passed.*
 
 ---
 
 ## 5. Inter-Agent Communication Thread
 
 > 📤 **Parent Orchestrator** `[YYYY-MM-DD HH:MM]`
-> Plan generated and ready for execution. Refer to `swagger.yaml` for request validation.
+> Plan generated and ready for execution. Follow TDD per ADR requirements. Refer to `swagger.yaml` if co-located.
 
 > 📩 **Child Container** `[YYYY-MM-DD HH:MM]`
 > *Awaiting execution logs or blockers from the child agent...*
